@@ -1,6 +1,7 @@
 package com.atn.mnomanager.logic;
 
 import com.atn.mnomanager.entities.MnoProfile;
+import com.atn.mnomanager.models.AgentConfigModel;
 
 import java.util.List;
 
@@ -48,4 +49,19 @@ public interface IMnoProfileProcessor {
      * @return
      */
     public MnoProfile getMnoProfileById(String mnoId);
+
+    /**
+     * Edit MnoProfile agent interface
+     *
+     * @param agentConfigModel
+     * @return
+     */
+    public MnoProfile addMnoAgentConfig(AgentConfigModel agentConfigModel);
+
+    /**
+     * Get MNO agent config by MNO id interface
+     * @param mnoId
+     * @return
+     */
+    public AgentConfigModel getMnoAgentConfigByMnoId(String mnoId);
 }

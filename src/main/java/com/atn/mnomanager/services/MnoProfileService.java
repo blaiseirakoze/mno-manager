@@ -1,5 +1,6 @@
 package com.atn.mnomanager.services;
 
+import com.atn.mnomanager.models.AgentConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class MnoProfileService {
     /**
      * Edit MnoProfile service
      *
+     * @param mnoId
      * @param mnoProfile
      * @return
      */
@@ -85,4 +87,27 @@ public class MnoProfileService {
     public ResponseEntity<?> getMnoProfileById(@PathVariable("mnoId") String mnoId) {
         return new ResponseEntity<MnoProfile>(mnoProfileProcessor.getMnoProfileById(mnoId), HttpStatus.CREATED);
     }
+
+    /**
+     * Edit MnoProfile agent service
+     *
+     * @param agentConfigModel
+     * @return
+     */
+    @RequestMapping(value = "/agent/add", method = RequestMethod.POST)
+    public ResponseEntity<?> addMnoAgentConfig(@RequestBody AgentConfigModel agentConfigModel) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.addMnoAgentConfig(agentConfigModel), HttpStatus.CREATED);
+    }
+
+    /**
+     * Get MNO agent config by MNO id service
+     *
+     * @param mnoId
+     * @return
+     */
+    @RequestMapping(value = "/agent/filter/{mnoId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMnoAgentConfigByMnoId(@PathVariable("mnoId") String mnoId) {
+        return new ResponseEntity<AgentConfigModel>(mnoProfileProcessor.getMnoAgentConfigByMnoId(mnoId), HttpStatus.OK);
+    }
+
 }

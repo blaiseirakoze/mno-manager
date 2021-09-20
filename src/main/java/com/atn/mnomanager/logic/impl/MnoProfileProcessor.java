@@ -1,5 +1,8 @@
 package com.atn.mnomanager.logic.impl;
 
+import com.atn.mnomanager.exceptions.HandlerInternalServerErrorException;
+import com.atn.mnomanager.exceptions.HandlerNotFoundException;
+import com.atn.mnomanager.models.AgentConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +32,7 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
         try {
             return mnoProfileRepository.save(mnoProfile);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HandlerInternalServerErrorException("Internal server error");
         }
     }
 
@@ -43,7 +46,7 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
         try {
             return mnoProfileRepository.findAll();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HandlerInternalServerErrorException("Internal server error");
         }
     }
 
@@ -57,10 +60,13 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     @Override
     public MnoProfile editMnoProfile(String mnoId, MnoProfile mnoProfile) {
         try {
-            MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).get();
+            MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
+            if (!foundMnoProfile.getId().equals(mnoId)) {
+                throw new HandlerNotFoundException("MNO not found");
+            }
             return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), mnoProfile.getName(), mnoProfile.getEmail(), mnoProfile.getTelephone(), mnoProfile.getAgentConfig(), mnoProfile.getCreationTime(), mnoProfile.getStatus()));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HandlerInternalServerErrorException("Internal server error");
         }
     }
 
@@ -73,10 +79,13 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     @Override
     public MnoProfile enableOrDisableMnoProfile(String mnoId, String status) {
         try {
-            MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).get();
+            MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
+            if (!foundMnoProfile.getId().equals(mnoId)) {
+                throw new HandlerNotFoundException("MNO not found");
+            }
             return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), foundMnoProfile.getAgentConfig(), foundMnoProfile.getCreationTime(), status));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HandlerInternalServerErrorException("Internal server error");
         }
     }
 
@@ -89,10 +98,51 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     @Override
     public MnoProfile getMnoProfileById(String mnoId) {
         try {
-            return mnoProfileRepository.findById(mnoId).get();
+            MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
+            if (!foundMnoProfile.getId().equals(mnoId)) {
+                throw new HandlerNotFoundException("MNO not found");
+            }
+            return foundMnoProfile;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HandlerInternalServerErrorException("Internal server error");
         }
     }
 
+    /**
+     * Edit MnoProfile agent processor
+     *
+     * @param agentConfigModel
+     * @return
+     */
+    @Override
+    public MnoProfile addMnoAgentConfig(AgentConfigModel agentConfigModel) {
+        try {
+            MnoProfile foundMnoProfile = mnoProfileRepository.findById(agentConfigModel.getMnoId()).orElse(new MnoProfile());
+            if (!foundMnoProfile.getId().equals(agentConfigModel.getMnoId())) {
+                throw new HandlerNotFoundException("MNO not found");
+            }
+            return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), agentConfigModel.getAgentConfig(), foundMnoProfile.getCreationTime(), foundMnoProfile.getStatus()));
+        } catch (Exception e) {
+            throw new HandlerInternalServerErrorException("Internal server error");
+        }
+    }
+
+    /**
+     * Get MNO agent config by MNO id interface
+     *
+     * @param mnoId
+     * @return
+     */
+    @Override
+    public AgentConfigModel getMnoAgentConfigByMnoId(String mnoId) {
+        try {
+            MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
+            if (!foundMnoProfile.getId().equals(mnoId)) {
+                throw new HandlerNotFoundException("MNO not found");
+            }
+            return new AgentConfigModel(foundMnoProfile.getId(), foundMnoProfile.getAgentConfig());
+        } catch (Exception e) {
+            throw new HandlerInternalServerErrorException("Internal server error");
+        }
+    }
 }

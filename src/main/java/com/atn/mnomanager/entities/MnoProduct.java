@@ -1,6 +1,5 @@
 package com.atn.mnomanager.entities;
 
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,4 +19,29 @@ public class MnoProduct {
 	private String atnProductId;
 	@Column(name = "mnoProductId", length = 90)
 	private String mnoProductId;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getAtnProductId() {
+		return atnProductId;
+	}
+
+	public void setAtnProductId(String atnProductId) {
+		this.atnProductId = atnProductId;
+	}
+
+	public String getMnoProductId() {
+		return mnoProductId;
+	}
+
+	public void setMnoProductId(String mnoProductId) {
+		this.mnoProductId = mnoProductId;
+	}
+
 }

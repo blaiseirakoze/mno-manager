@@ -19,5 +19,37 @@ public class MnoAccount {
 	@Column(name = "accountId", length = 90)
 	private String accountId;
 	private int isNormalAccount;
-	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMnoProfileId() {
+		return mnoProfileId;
+	}
+
+	public void setMnoProfileId(String mnoProfileId) {
+		this.mnoProfileId = mnoProfileId;
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public int getIsNormalAccount() {
+		return isNormalAccount;
+	}
+
+	public void setIsNormalAccount(int isNormalAccount) {
+		this.isNormalAccount = isNormalAccount;
+	}
+
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 public class MnoProduct {
 	@Id
 	@Column(name = "id", length = 90)
-	private String id = UUID.randomUUID().toString();;
+	private String id = UUID.randomUUID().toString();
 	@ManyToOne
 	@JoinColumn(name = "mno_profile_id", nullable = false)
 	private MnoProfile mnoProfile;

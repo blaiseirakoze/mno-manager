@@ -63,6 +63,7 @@ public class MnoProductProcessor implements IMnoProductProcessor {
 
     /**
      * Remove MnoProduct processor
+     *
      * @param id
      * @return
      */
@@ -70,7 +71,7 @@ public class MnoProductProcessor implements IMnoProductProcessor {
     public SuccessResponse removeMnoProduct(String id) {
         try {
             mnoProductRepository.deleteById(id);
-            return new SuccessResponse("mno product well deleted");
+            return new SuccessResponse("mno product well removed");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

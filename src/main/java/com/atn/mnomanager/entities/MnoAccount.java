@@ -1,55 +1,64 @@
 package com.atn.mnomanager.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.UUID;
 
 /**
- * 
  * @author blaise irakoze
- *
  */
 @Entity
 public class MnoAccount {
-	@Id
-	@Column(name = "id", length = 90)
-	private String id;
-	@Column(name = "mnoProfileId", length = 90)
-	private String mnoProfileId;
-	@Column(name = "accountId", length = 90)
-	private String accountId;
-	private int isNormalAccount;
+    @Id
+    @Column(name = "id", length = 90)
+    private String id = UUID.randomUUID().toString();
+    private int isNormalAccount;
 
-	public String getId() {
-		return id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "mno_profile_id", nullable = false)
+    private MnoProfile mnoProfile;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
 
-	public String getMnoProfileId() {
-		return mnoProfileId;
-	}
+    public MnoAccount() {
+    }
 
-	public void setMnoProfileId(String mnoProfileId) {
-		this.mnoProfileId = mnoProfileId;
-	}
+    public MnoAccount(int isNormalAccount, MnoProfile mnoProfile, Account account) {
+        this.isNormalAccount = isNormalAccount;
+        this.mnoProfile = mnoProfile;
+        this.account = account;
+    }
 
-	public String getAccountId() {
-		return accountId;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public int getIsNormalAccount() {
-		return isNormalAccount;
-	}
+    public int getIsNormalAccount() {
+        return isNormalAccount;
+    }
 
-	public void setIsNormalAccount(int isNormalAccount) {
-		this.isNormalAccount = isNormalAccount;
-	}
+    public void setIsNormalAccount(int isNormalAccount) {
+        this.isNormalAccount = isNormalAccount;
+    }
 
+    public MnoProfile getMnoProfile() {
+        return mnoProfile;
+    }
+
+    public void setMnoProfile(MnoProfile mnoProfile) {
+        this.mnoProfile = mnoProfile;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 }

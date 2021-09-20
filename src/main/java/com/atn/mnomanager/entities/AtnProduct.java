@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.*;
 
@@ -14,7 +15,7 @@ import javax.persistence.*;
 public class AtnProduct {
     @Id
     @Column(name = "id", length = 90)
-    private String id;
+    private String id = UUID.randomUUID().toString();
     @Column(name = "name", length = 90)
     private String name;
     private Date creationTime;

@@ -1,0 +1,88 @@
+package com.atn.mnomanager.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.atn.mnomanager.entities.MnoProfile;
+import com.atn.mnomanager.logic.IMnoProfileProcessor;
+
+import java.util.List;
+
+/**
+ * @author blaise irakoze
+ */
+@RestController
+@RequestMapping(value = "mno")
+@CrossOrigin
+public class MnoProfileService {
+
+    @Autowired
+    private IMnoProfileProcessor mnoProfileProcessor;
+
+    /**
+     * Create MnoProfile service
+     *
+     * @param mnoProfile
+     * @return
+     */
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<?> createMnoProfile(@RequestBody MnoProfile mnoProfile) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.createMnoProfile(mnoProfile), HttpStatus.CREATED);
+    }
+
+    /**
+     * Get all MnoProfile service
+     *
+     * @return
+     */
+    @RequestMapping(value = "/filter", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllMnoProfile() {
+        return new ResponseEntity<List<MnoProfile>>(mnoProfileProcessor.getAllMnoProfile(), HttpStatus.OK);
+    }
+
+    /**
+     * Edit MnoProfile service
+     *
+     * @param mnoProfile
+     * @return
+     */
+    @RequestMapping(value = "/edit/{mnoId}", method = RequestMethod.POST)
+    public ResponseEntity<?> editMnoProfile(@PathVariable("mnoId") String mnoId, @RequestBody MnoProfile mnoProfile) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.editMnoProfile(mnoId, mnoProfile), HttpStatus.CREATED);
+    }
+
+    /**
+     * Enable MnoProfile service
+     *
+     * @param mnoId
+     * @return
+     */
+    @RequestMapping(value = "/enable/{mnoId}", method = RequestMethod.GET)
+    public ResponseEntity<?> enableMnoProfile(@PathVariable("mnoId") String mnoId) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "enable"), HttpStatus.CREATED);
+    }
+
+    /**
+     * Disable MnoProfile service
+     *
+     * @param mnoId
+     * @return
+     */
+    @RequestMapping(value = "/disable/{mnoId}", method = RequestMethod.GET)
+    public ResponseEntity<?> disableMnoProfile(@PathVariable("mnoId") String mnoId) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "disable"), HttpStatus.CREATED);
+    }
+
+    /**
+     * Get MnoProfile by id service
+     *
+     * @param mnoId
+     * @return
+     */
+    @RequestMapping(value = "/filter/{mnoId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMnoProfileById(@PathVariable("mnoId") String mnoId) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.getMnoProfileById(mnoId), HttpStatus.CREATED);
+    }
+}

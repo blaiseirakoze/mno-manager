@@ -1,11 +1,15 @@
 package com.atn.mnomanager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * 
@@ -27,6 +31,10 @@ public class MnoProfile {
 	private Date creationTime = new Date();
 	@Column(name = "status", length = 30)
 	private String status;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "mnoProfile")
+	private List<MnoProduct> mnoProducts;
 
 	public MnoProfile() {
 	}

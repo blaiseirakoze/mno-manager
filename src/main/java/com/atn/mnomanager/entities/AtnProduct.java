@@ -1,57 +1,78 @@
 package com.atn.mnomanager.entities;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.*;
 
 /**
- * 
  * @author blaise irakoze
- *
  */
 @Entity
 public class AtnProduct {
-	@Id
-	@Column(name = "id", length = 90)
-	private String id;
-	@Column(name = "name", length = 90)
-	private String name;
-	private Date creationTime;
-	@Column(name = "status", length = 30)
-	private String status;
+    @Id
+    @Column(name = "id", length = 90)
+    private String id;
+    @Column(name = "name", length = 90)
+    private String name;
+    private Date creationTime;
+    @Column(name = "status", length = 30)
+    private String status;
 
-	public String getId() {
-		return id;
-	}
+    @JsonIgnore
+    @OneToMany(mappedBy = "atnProduct")
+    private List<MnoProduct> mnoProducts;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Date getCreationTime() {
-		return creationTime;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setCreationTime(Date creationTime) {
-		this.creationTime = creationTime;
-	}
+    public Date getCreationTime() {
+        return creationTime;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<MnoProduct> getMnoProducts() {
+        return mnoProducts;
+    }
+
+    public void setMnoProducts(List<MnoProduct> mnoProducts) {
+        this.mnoProducts = mnoProducts;
+    }
+
+    @Override
+    public String toString() {
+        return "AtnProduct{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", creationTime=" + creationTime +
+                ", status='" + status + '\'' +
+                ", mnoProducts=" + mnoProducts +
+                '}';
+    }
 }

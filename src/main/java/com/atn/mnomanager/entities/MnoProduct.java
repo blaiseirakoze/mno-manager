@@ -1,9 +1,8 @@
 package com.atn.mnomanager.entities;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * 
@@ -14,11 +13,21 @@ import javax.persistence.Id;
 public class MnoProduct {
 	@Id
 	@Column(name = "id", length = 90)
-	private String id;
-	@Column(name = "atnProductId", length = 90)
-	private String atnProductId;
-	@Column(name = "mnoProductId", length = 90)
-	private String mnoProductId;
+	private String id = UUID.randomUUID().toString();;
+	@ManyToOne
+	@JoinColumn(name = "mno_profile_id", nullable = false)
+	private MnoProfile mnoProfile;
+	@ManyToOne
+	@JoinColumn(name = "atn_product_id", nullable = false)
+	private AtnProduct atnProduct;
+
+	public MnoProduct() {
+	}
+
+	public MnoProduct(MnoProfile mnoProfile, AtnProduct atnProduct) {
+		this.mnoProfile = mnoProfile;
+		this.atnProduct = atnProduct;
+	}
 
 	public String getId() {
 		return id;
@@ -28,20 +37,28 @@ public class MnoProduct {
 		this.id = id;
 	}
 
-	public String getAtnProductId() {
-		return atnProductId;
+	public MnoProfile getMnoProfile() {
+		return mnoProfile;
 	}
 
-	public void setAtnProductId(String atnProductId) {
-		this.atnProductId = atnProductId;
+	public void setMnoProfile(MnoProfile mnoProfile) {
+		this.mnoProfile = mnoProfile;
 	}
 
-	public String getMnoProductId() {
-		return mnoProductId;
+	public AtnProduct getAtnProduct() {
+		return atnProduct;
 	}
 
-	public void setMnoProductId(String mnoProductId) {
-		this.mnoProductId = mnoProductId;
+	public void setAtnProduct(AtnProduct atnProduct) {
+		this.atnProduct = atnProduct;
 	}
 
+	@Override
+	public String toString() {
+		return "MnoProduct{" +
+				"id='" + id + '\'' +
+				", mnoProfile=" + mnoProfile +
+				", atnProduct=" + atnProduct +
+				'}';
+	}
 }

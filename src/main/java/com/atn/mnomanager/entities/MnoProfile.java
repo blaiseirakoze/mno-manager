@@ -25,6 +25,7 @@ public class MnoProfile {
     private String email;
     @Column(name = "telephone", length = 30)
     private String telephone;
+    @Column(columnDefinition="TEXT")
     private String agentConfig;
     private Date creationTime = new Date();
     @Column(name = "status", length = 30)

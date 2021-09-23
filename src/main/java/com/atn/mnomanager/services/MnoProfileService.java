@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import com.atn.mnomanager.entities.MnoProfile;
 import com.atn.mnomanager.logic.IMnoProfileProcessor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -108,6 +111,24 @@ public class MnoProfileService {
     @RequestMapping(value = "/agent/filter/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> getMnoAgentConfigByMnoId(@PathVariable("mnoId") String mnoId) {
         return new ResponseEntity<AgentConfigModel>(mnoProfileProcessor.getMnoAgentConfigByMnoId(mnoId), HttpStatus.OK);
+    }
+
+    /**
+     * Get MnoByFilterParams service
+     *
+     * @param name
+     * @param status
+     * @param agentConfig
+     * @param email
+     * @param creationTime
+     * @param telephone
+     * @return
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/filter/", method = RequestMethod.POST)
+    public ResponseEntity<?> getMnoByFilterParams(@RequestParam String name, @RequestParam String status, @RequestParam String agentConfig, @RequestParam String email, @RequestParam String creationTime, @RequestParam String telephone) throws ParseException {
+//        Date creationDate = new SimpleDateFormat("yyyy-MM-dd").parse(creationTime);
+        return new ResponseEntity<List<MnoProfile>>(mnoProfileProcessor.getMnoByFilterParams(new MnoProfile(name, email, telephone, agentConfig, status)), HttpStatus.OK);
     }
 
 }

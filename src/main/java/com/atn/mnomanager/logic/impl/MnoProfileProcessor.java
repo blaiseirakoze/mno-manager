@@ -2,6 +2,7 @@ package com.atn.mnomanager.logic.impl;
 
 import com.atn.mnomanager.exceptions.HandlerInternalServerErrorException;
 import com.atn.mnomanager.exceptions.HandlerNotFoundException;
+import com.atn.mnomanager.facades.FilterProcessor;
 import com.atn.mnomanager.models.AgentConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
 
     @Autowired
     private MnoProfileRepository mnoProfileRepository;
+
+    @Autowired
+    private FilterProcessor filterProcessor;
 
     /**
      * Create MnoProfile processor
@@ -128,7 +132,7 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     }
 
     /**
-     * Get MNO agent config by MNO id interface
+     * Get MNO agent config by MNO id processor
      *
      * @param mnoId
      * @return
@@ -141,6 +145,22 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
                 throw new HandlerNotFoundException("MNO not found");
             }
             return new AgentConfigModel(foundMnoProfile.getId(), foundMnoProfile.getAgentConfig());
+        } catch (Exception e) {
+            throw new HandlerInternalServerErrorException("Internal server error");
+        }
+    }
+
+    /**
+     * Get MnoByFilterParams processor
+     *
+     * @param mnoProfile
+     * @return
+     */
+    @Override
+    public List<MnoProfile> getMnoByFilterParams(MnoProfile mnoProfile) {
+        try {
+            List<MnoProfile> foundMnoProfile = filterProcessor.filterTransfer(mnoProfile);
+            return foundMnoProfile;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Internal server error");
         }

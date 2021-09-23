@@ -60,8 +60,17 @@ public interface IMnoProfileProcessor {
 
     /**
      * Get MNO agent config by MNO id interface
+     *
      * @param mnoId
      * @return
      */
     public AgentConfigModel getMnoAgentConfigByMnoId(String mnoId);
+
+    /**
+     * Get MnoByFilterParams interface
+     *
+     * @param mnoProfile
+     * @return
+     */
+    public List<MnoProfile> getMnoByFilterParams(MnoProfile mnoProfile);
 }

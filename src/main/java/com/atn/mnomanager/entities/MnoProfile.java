@@ -25,7 +25,7 @@ public class MnoProfile {
     private String email;
     @Column(name = "telephone", length = 30)
     private String telephone;
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String agentConfig;
     private Date creationTime = new Date();
     @Column(name = "status", length = 30)
@@ -40,6 +40,23 @@ public class MnoProfile {
     private List<MnoAccount> mnoAccounts;
 
     public MnoProfile() {
+    }
+
+    public MnoProfile(String name, String email, String telephone, String agentConfig, String status) {
+        this.name = name;
+        this.email = email;
+        this.telephone = telephone;
+        this.agentConfig = agentConfig;
+        this.status = status;
+    }
+
+    public MnoProfile(String name, String email, String telephone, String agentConfig, Date creationTime, String status) {
+        this.name = name;
+        this.email = email;
+        this.telephone = telephone;
+        this.agentConfig = agentConfig;
+        this.creationTime = creationTime;
+        this.status = status;
     }
 
     public MnoProfile(String id, String name, String email, String telephone, String agentConfig, Date creationTime, String status) {

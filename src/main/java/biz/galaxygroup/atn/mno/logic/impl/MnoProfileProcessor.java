@@ -5,7 +5,6 @@ import biz.galaxygroup.atn.mno.exceptions.HandlerInternalServerErrorException;
 import biz.galaxygroup.atn.mno.exceptions.HandlerNotFoundException;
 import biz.galaxygroup.atn.mno.facades.FilterProcessor;
 import biz.galaxygroup.atn.mno.facades.MnoProfileRepository;
-import biz.galaxygroup.atn.mno.facades.MnoFilterProcessor;
 import biz.galaxygroup.atn.mno.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -147,19 +146,18 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
      * @param mnoId
      * @return
      */
-
-//    @Override
-//    public MnoProfile removeMnoAgentConfig(String mnoId) {
-//        MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
-//        if (foundMnoProfile.getId() == null) {
-//            throw new HandlerNotFoundException("MNO not found");
-//        }
-//        try {
-//            return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), "", foundMnoProfile.getCreationTime(), foundMnoProfile.getStatus()));
-//        } catch (Exception e) {
-//            throw new HandlerInternalServerErrorException("Error occurs");
-//        }
-//    }
+    @Override
+    public MnoProfile removeMnoAgentConfig(String mnoId) {
+        MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
+        if (foundMnoProfile.getId() == null) {
+            throw new HandlerNotFoundException("MNO not found");
+        }
+        try {
+            return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), "", foundMnoProfile.getCreationTime(), foundMnoProfile.getStatus()));
+        } catch (Exception e) {
+            throw new HandlerInternalServerErrorException("Error occurs");
+        }
+    }
 
     /**
      * Get MNO agent config by MNO id processor

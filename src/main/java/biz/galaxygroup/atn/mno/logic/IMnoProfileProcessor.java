@@ -54,12 +54,20 @@ public interface IMnoProfileProcessor {
     public MnoProfile getMnoProfileById(String mnoId);
 
     /**
-     * Edit MnoProfile agent interface
+     * Add MnoProfile agent interface
      *
      * @param agentConfigModel
      * @return
      */
     public SuccessResponseModel addMnoAgentConfig(AgentConfigModel agentConfigModel);
+
+    /**
+     * Remove MnoProfile agent interface
+     *
+     * @param mnoId
+     * @return
+     */
+    public MnoProfile removeMnoAgentConfig(String mnoId);
 
     /**
      * Get MNO agent config by MNO id interface

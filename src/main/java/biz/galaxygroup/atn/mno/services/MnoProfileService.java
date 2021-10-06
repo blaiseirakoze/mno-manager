@@ -2,7 +2,6 @@ package biz.galaxygroup.atn.mno.services;
 
 import biz.galaxygroup.atn.mno.models.AgentConfigModel;
 import biz.galaxygroup.atn.mno.models.GetResponseModel;
-import biz.galaxygroup.atn.mno.models.MnoFilterModel;
 import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import biz.galaxygroup.atn.mno.entities.MnoProfile;
 import biz.galaxygroup.atn.mno.logic.IMnoProfileProcessor;
 
+import javax.annotation.security.RolesAllowed;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +32,7 @@ public class MnoProfileService {
      * @param mnoProfile
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createMnoProfile(@RequestBody List<MnoProfile> mnoProfile) {
         return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.createMnoProfile(mnoProfile), HttpStatus.CREATED);
@@ -41,9 +40,11 @@ public class MnoProfileService {
 
     /**
      * Get all MnoProfile service
+     * client-admin, client-reseller
      *
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     public ResponseEntity<?> getAllMnoProfile() {
         return new ResponseEntity<List<MnoProfile>>(mnoProfileProcessor.getAllMnoProfile(), HttpStatus.OK);
@@ -56,6 +57,7 @@ public class MnoProfileService {
      * @param mnoProfile
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/edit/{mnoId}", method = RequestMethod.POST)
     public ResponseEntity<?> editMnoProfile(@PathVariable("mnoId") String mnoId, @RequestBody MnoProfile mnoProfile) {
         return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.editMnoProfile(mnoId, mnoProfile), HttpStatus.CREATED);
@@ -67,6 +69,7 @@ public class MnoProfileService {
      * @param mnoId
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/enable/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> enableMnoProfile(@PathVariable("mnoId") String mnoId) {
         return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "enable"), HttpStatus.CREATED);
@@ -78,6 +81,7 @@ public class MnoProfileService {
      * @param mnoId
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/disable/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> disableMnoProfile(@PathVariable("mnoId") String mnoId) {
         return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "disable"), HttpStatus.CREATED);
@@ -89,6 +93,7 @@ public class MnoProfileService {
      * @param mnoId
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/filter/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> getMnoProfileById(@PathVariable("mnoId") String mnoId) {
         return new ResponseEntity<MnoProfile>(mnoProfileProcessor.getMnoProfileById(mnoId), HttpStatus.CREATED);
@@ -100,15 +105,23 @@ public class MnoProfileService {
      * @param agentConfigModel
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/agent/add", method = RequestMethod.POST)
     public ResponseEntity<?> addMnoAgentConfig(@RequestBody AgentConfigModel agentConfigModel) {
         return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.addMnoAgentConfig(agentConfigModel), HttpStatus.CREATED);
     }
 
-//    @RequestMapping(value = "/agent/remove/{mnoId}", method = RequestMethod.POST)
-//    public ResponseEntity<?> removeMnoAgentConfig(@RequestBody AgentConfigModel agentConfigModel) {
-//        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.addMnoAgentConfig(agentConfigModel), HttpStatus.CREATED);
-//    }
+    /**
+     * Remove MnoProfile agent service
+     *
+     * @param mnoId
+     * @return
+     */
+    @RolesAllowed({"admin"})
+    @RequestMapping(value = "/agent/remove/{mnoId}", method = RequestMethod.POST)
+    public ResponseEntity<?> removeMnoAgentConfig(@PathVariable("mnoId") String mnoId) {
+        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.removeMnoAgentConfig(mnoId), HttpStatus.CREATED);
+    }
 
     /**
      * Get MNO agent config by MNO id service
@@ -116,6 +129,7 @@ public class MnoProfileService {
      * @param mnoId
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/agent/filter/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> getMnoAgentConfigByMnoId(@PathVariable("mnoId") String mnoId) {
         return new ResponseEntity<AgentConfigModel>(mnoProfileProcessor.getMnoAgentConfigByMnoId(mnoId), HttpStatus.OK);
@@ -132,6 +146,7 @@ public class MnoProfileService {
      * @return
      * @throws ParseException
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/filter/", method = RequestMethod.GET)
     public ResponseEntity<?> getMnoByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
         return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoProfileProcessor.getMnoByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);

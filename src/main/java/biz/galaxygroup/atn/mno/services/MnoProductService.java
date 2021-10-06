@@ -10,10 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,6 +31,7 @@ public class MnoProductService {
      * @param mnoProductModel
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createMnoProduct(@RequestBody List<MnoProductModel> mnoProductModel) {
         return new ResponseEntity<SuccessResponseModel>(mnoProductProcessor.createMnoProduct(mnoProductModel), HttpStatus.CREATED);
@@ -44,6 +43,7 @@ public class MnoProductService {
      * @param mnoProductId
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/filter/{mnoProductId}", method = RequestMethod.GET)
     public ResponseEntity<?> getMnoProductByIdMnoProductId(@PathVariable("mnoProductId") String mnoProductId) {
         return new ResponseEntity<MnoProduct>(mnoProductProcessor.getMnoProductByMnoProductId(mnoProductId), HttpStatus.OK);
@@ -55,6 +55,7 @@ public class MnoProductService {
      * @param mnoProductId
      * @return
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/remove/{mnoProductId}", method = RequestMethod.GET)
     public ResponseEntity<?> removeMnoProduct(@PathVariable("mnoProductId") String mnoProductId) {
         return new ResponseEntity<SuccessResponseModel>(mnoProductProcessor.removeMnoProduct(mnoProductId), HttpStatus.CREATED);
@@ -71,6 +72,7 @@ public class MnoProductService {
      * @return
      * @throws ParseException
      */
+    @RolesAllowed({"admin"})
     @RequestMapping(value = "/filter/", method = RequestMethod.GET)
     public ResponseEntity<?> getProductByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
         return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoProductProcessor.getProductByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);

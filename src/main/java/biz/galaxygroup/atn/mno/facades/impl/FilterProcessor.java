@@ -39,10 +39,10 @@ public class FilterProcessor implements biz.galaxygroup.atn.mno.facades.FilterPr
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         StringBuilder stringBuilder = new StringBuilder("Select T from " + table + " T where T.id is not null ");
         if (startDate != null) {
-            stringBuilder.append(" AND T.creationTime > '" + format.format(new SimpleDateFormat("yyyy-MM-dd").parse(addRemoveDayToDate(startDate, -1))) + "'");
+            stringBuilder.append(" AND T.creationTime > '" + format.format(new SimpleDateFormat("yyyy-MM-dd").parse(startDate)) + "'");
         }
         if (endDate != null) {
-            stringBuilder.append(" AND T.creationTime < '" + format.format(new SimpleDateFormat("yyyy-MM-dd").parse(addRemoveDayToDate(endDate, 1))) + "'");
+            stringBuilder.append(" AND T.creationTime < '" + format.format(new SimpleDateFormat("yyyy-MM-dd").parse(endDate)) + "'");
         }
         if (searchBy != null) {
             String[] searchParams = searchBy.split(",");

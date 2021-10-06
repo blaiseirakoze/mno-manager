@@ -129,10 +129,11 @@ public class MnoAccountProcessor implements IMnoAccountProcessor {
         try {
             List<Object> list = filterProcessor.filterTransfer(pageNumber, pageSize, searchBy, startDate, endDate, "MnoAccount");
             GetResponseModel getResponseModel;
+            int totalItems = mnoAccountRepository.countMnoAccount();
             if (pageNumber == null) {
-                getResponseModel = new GetResponseModel(list.size(), list);
+                getResponseModel = new GetResponseModel(totalItems, list);
             } else {
-                getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
+                getResponseModel = new GetResponseModel(totalItems, Integer.valueOf(pageNumber), list);
             }
             return getResponseModel;
         } catch (Exception e) {

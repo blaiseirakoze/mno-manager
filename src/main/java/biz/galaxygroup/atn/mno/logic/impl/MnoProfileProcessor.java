@@ -193,10 +193,11 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
         try {
             List<Object> list = filterProcessor.filterTransfer(pageNumber, pageSize, searchBy, startDate, endDate, "MnoProfile");
             GetResponseModel getResponseModel;
+            int totalItems = mnoProfileRepository.countMnoProfile();
             if (pageNumber == null) {
-                getResponseModel = new GetResponseModel(list.size(), list);
+                getResponseModel = new GetResponseModel(totalItems, list);
             } else {
-                getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
+                getResponseModel = new GetResponseModel(totalItems, Integer.valueOf(pageNumber), list);
             }
             return getResponseModel;
         } catch (Exception e) {

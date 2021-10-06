@@ -134,10 +134,11 @@ public class MnoProductProcessor implements IMnoProductProcessor {
         try {
             List<Object> list = filterProcessor.filterTransfer(pageNumber, pageSize, searchBy, startDate, endDate, "MnoProduct");
             GetResponseModel getResponseModel;
+            int totalItems = mnoProductRepository.countMnoProduct();
             if (pageNumber == null) {
-                getResponseModel = new GetResponseModel(list.size(), list);
+                getResponseModel = new GetResponseModel(totalItems, list);
             } else {
-                getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
+                getResponseModel = new GetResponseModel(totalItems, Integer.valueOf(pageNumber), list);
             }
             return getResponseModel;
         } catch (Exception e) {

@@ -16,6 +16,11 @@ public class GetResponseModel {
         this.data = data;
     }
 
+    public GetResponseModel(int totalItems, Object data) {
+        this.totalItems = totalItems;
+        this.data = data;
+    }
+
     public int getTotalItems() {
         return totalItems;
     }

@@ -74,7 +74,12 @@ public class MnoProductService {
      */
     @RolesAllowed({"admin"})
     @RequestMapping(value = "/filter/", method = RequestMethod.GET)
-    public ResponseEntity<?> getProductByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+    public ResponseEntity<?> getProductByFilterParams(
+            @RequestParam(required = false) String pageNumber,
+            @RequestParam(required = false) String pageSize,
+            @RequestParam(required = false) String searchBy,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) throws ParseException {
         return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoProductProcessor.getProductByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);
     }
 

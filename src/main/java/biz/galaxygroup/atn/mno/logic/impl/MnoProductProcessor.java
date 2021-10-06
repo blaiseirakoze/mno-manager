@@ -8,14 +8,19 @@ import biz.galaxygroup.atn.mno.exceptions.HandlerNotFoundException;
 import biz.galaxygroup.atn.mno.facades.AtnProductRepository;
 import biz.galaxygroup.atn.mno.facades.MnoProductRepository;
 import biz.galaxygroup.atn.mno.facades.MnoProfileRepository;
-import biz.galaxygroup.atn.mno.facades.ProductFilterProcessor;
+import biz.galaxygroup.atn.mno.facades.FilterProcessor;
+import biz.galaxygroup.atn.mno.models.FilterModel;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoProductModel;
-import biz.galaxygroup.atn.mno.models.ProductFilterModel;
-import biz.galaxygroup.atn.mno.models.SuccessResponse;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 import biz.galaxygroup.atn.mno.logic.IMnoProductProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +39,7 @@ public class MnoProductProcessor implements IMnoProductProcessor {
     private AtnProductRepository atnProductRepository;
 
     @Autowired
-    private ProductFilterProcessor filterProcessor;
+    private FilterProcessor filterProcessor;
 
     /**
      * Create MnoProduct processor
@@ -43,20 +48,36 @@ public class MnoProductProcessor implements IMnoProductProcessor {
      * @return
      */
     @Override
-    public MnoProduct createMnoProduct(MnoProductModel mnoProductModel) {
-        MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoProductModel.getMnoProfileId()).orElse(new MnoProfile());
-        if (foundMnoProfile.getId() == null) {
-            throw new HandlerNotFoundException("MNO not found");
-        }
-        AtnProduct foundAtnProduct = atnProductRepository.findById(mnoProductModel.getAtnProductId()).orElse(new AtnProduct());
-        if (foundAtnProduct.getId() == null) {
-            throw new HandlerNotFoundException("Atn product not found");
+    public SuccessResponseModel createMnoProduct(List<MnoProductModel> mnoProductModel) {
+        List<MnoProfile> foundMnoProfileList = new ArrayList<>();
+        List<AtnProduct> foundAtnProductList = new ArrayList<>();
+        int i = 0;
+        MnoProfile foundMnoProfile = new MnoProfile();
+        AtnProduct foundAtnProduct = new AtnProduct();
+        for (MnoProductModel mnoProduct : mnoProductModel) {
+            foundMnoProfile = mnoProfileRepository.findById(mnoProduct.getMnoProfileId()).orElse(new MnoProfile());
+            if (foundMnoProfile.getId() == null) {
+                throw new HandlerNotFoundException("MNO with" + mnoProduct.getMnoProfileId() + " not found");
+            } else {
+                foundMnoProfileList.add(foundMnoProfile);
+            }
+            foundAtnProduct = atnProductRepository.findById(mnoProduct.getAtnProductId()).orElse(new AtnProduct());
+            if (foundAtnProduct.getId() == null) {
+                throw new HandlerNotFoundException("Atn product with" + mnoProduct.getAtnProductId() + " not found");
+            } else {
+                foundAtnProductList.add(foundAtnProduct);
+            }
         }
         try {
-            return mnoProductRepository.save(new MnoProduct(foundMnoProfile, foundAtnProduct));
+            for (MnoProductModel mnoProduct : mnoProductModel) {
+                mnoProductRepository.save(new MnoProduct(foundMnoProfileList.get(i), foundAtnProductList.get(i)));
+                i++;
+            }
+            return new SuccessResponseModel(HttpStatus.CREATED.toString(), "Mno product successfully created");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
+
     }
 
     /**
@@ -85,14 +106,14 @@ public class MnoProductProcessor implements IMnoProductProcessor {
      * @return
      */
     @Override
-    public SuccessResponse removeMnoProduct(String id) {
+    public SuccessResponseModel removeMnoProduct(String id) {
         MnoProduct foundMnoProduct = mnoProductRepository.findById(id).orElse(new MnoProduct());
         if (foundMnoProduct.getId() == null) {
             throw new HandlerNotFoundException("Mno product not found");
         }
         try {
             mnoProductRepository.deleteById(id);
-            return new SuccessResponse("mno product well removed");
+            return new SuccessResponseModel(HttpStatus.NO_CONTENT.toString(), "Mno product successfully removed");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
@@ -101,17 +122,35 @@ public class MnoProductProcessor implements IMnoProductProcessor {
     /**
      * Get ProductByFilterParams processor
      *
-     * @param productFilterModel
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
      * @return
      */
     @Override
-    public List<MnoProduct> getProductByFilterParams(ProductFilterModel productFilterModel) {
+    public GetResponseModel getProductByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate) {
         try {
-            List<MnoProduct> foundMnoProduct = filterProcessor.filterTransfer(productFilterModel);
-            return foundMnoProduct;
+            FilterModel filterModel = new FilterModel();
+            if (startDate.isEmpty() && endDate.isEmpty()) {
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy);
+            } else if (!startDate.isEmpty() && endDate.isEmpty()) {
+                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, sDate);
+            } else if (startDate.isEmpty() && !endDate.isEmpty()) {
+                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate);
+            } else {
+                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate, sDate);
+            }
+            List<Object> list = filterProcessor.filterTransfer(filterModel, "MnoProduct");
+            GetResponseModel getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
+            return getResponseModel;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
     }
-
 }

@@ -2,6 +2,8 @@ package biz.galaxygroup.atn.mno.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,9 @@ public class MnoProfile {
     private Date creationTime;
     @Column(name = "status", length = 30)
     private String status;
+//    @Index
+    @Column(columnDefinition = "TEXT", name = "search_by")
+    private String searchBy;
 
     @JsonIgnore
     @OneToMany(mappedBy = "mnoProfile")
@@ -37,9 +42,11 @@ public class MnoProfile {
     private List<MnoAccount> mnoAccounts;
 
     @PrePersist
-    public void prepare() {
+    public void prepare() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
         this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
+        this.searchBy = this.name + "," + this.email + "," + this.telephone + "," + this.agentConfig + "," + format.format(this.creationTime) + "," + this.status;
     }
 
     public MnoProfile() {
@@ -126,6 +133,30 @@ public class MnoProfile {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSearchBy() {
+        return searchBy;
+    }
+
+    public void setSearchBy(String searchBy) {
+        this.searchBy = searchBy;
+    }
+
+    public List<MnoProduct> getMnoProducts() {
+        return mnoProducts;
+    }
+
+    public void setMnoProducts(List<MnoProduct> mnoProducts) {
+        this.mnoProducts = mnoProducts;
+    }
+
+    public List<MnoAccount> getMnoAccounts() {
+        return mnoAccounts;
+    }
+
+    public void setMnoAccounts(List<MnoAccount> mnoAccounts) {
+        this.mnoAccounts = mnoAccounts;
     }
 
     @Override

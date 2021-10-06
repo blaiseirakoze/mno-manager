@@ -1,8 +1,11 @@
 package biz.galaxygroup.atn.mno.logic;
 
 import biz.galaxygroup.atn.mno.entities.MnoAccount;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoAccountModel;
-import biz.galaxygroup.atn.mno.models.SuccessResponse;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
+
+import java.util.List;
 
 public interface IMnoAccountProcessor {
 
@@ -12,7 +15,7 @@ public interface IMnoAccountProcessor {
      * @param mnoAccountModel
      * @return
      */
-    public MnoAccount createMnoAccount(MnoAccountModel mnoAccountModel);
+    public SuccessResponseModel createMnoAccount(List<MnoAccountModel> mnoAccountModel);
 
     /**
      * Get MnaAccount by id interface
@@ -28,5 +31,16 @@ public interface IMnoAccountProcessor {
      * @param id
      * @return
      */
-    public SuccessResponse removeMnoAccount(String id);
+    public SuccessResponseModel removeMnoAccount(String id);
+
+    /**
+     * Get MnoAccountByFilterParams interface
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public GetResponseModel getMnoAccountByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate);
 }

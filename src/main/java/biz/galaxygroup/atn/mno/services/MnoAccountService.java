@@ -2,27 +2,36 @@ package biz.galaxygroup.atn.mno.services;
 
 import biz.galaxygroup.atn.mno.entities.MnoAccount;
 import biz.galaxygroup.atn.mno.logic.IMnoAccountProcessor;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoAccountModel;
-import biz.galaxygroup.atn.mno.models.SuccessResponse;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.util.List;
+
 /**
  * @author blaise irakoze
  */
 @RestController
-@RequestMapping(value = "mno/account")
+@RequestMapping(value = "api/mno/account")
 @CrossOrigin
 public class MnoAccountService {
 
     @Autowired
     private IMnoAccountProcessor mnoAccountProcessor;
 
+    /**
+     *
+     * @param mnoAccountModel
+     * @return
+     */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createMnoAccount(@RequestBody MnoAccountModel mnoAccountModel) {
-        return new ResponseEntity<MnoAccount>(mnoAccountProcessor.createMnoAccount(mnoAccountModel), HttpStatus.CREATED);
+    public ResponseEntity<?> createMnoAccount(@RequestBody List<MnoAccountModel> mnoAccountModel) {
+        return new ResponseEntity<SuccessResponseModel>(mnoAccountProcessor.createMnoAccount(mnoAccountModel), HttpStatus.CREATED);
     }
 
     /**
@@ -44,6 +53,22 @@ public class MnoAccountService {
      */
     @RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> removeMnoAccount(@PathVariable("id") String id) {
-        return new ResponseEntity<SuccessResponse>(mnoAccountProcessor.removeMnoAccount(id), HttpStatus.CREATED);
+        return new ResponseEntity<SuccessResponseModel>(mnoAccountProcessor.removeMnoAccount(id), HttpStatus.CREATED);
+    }
+
+    /**
+     * Get MnoAccountsByFilterParams service
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/filter/", method = RequestMethod.GET)
+    public ResponseEntity<?> getMnoAccountsByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+        return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoAccountProcessor.getMnoAccountByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);
     }
 }

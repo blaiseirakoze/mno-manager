@@ -13,6 +13,9 @@ public class MnoAccount {
     @Column(name = "id", length = 90)
     private String id;
     private int isNormalAccount;
+    private Date creationTime;
+    @Column(columnDefinition = "TEXT")
+    private String searchBy;
 
     @ManyToOne
     @JoinColumn(name = "mno_profile_id", nullable = false)
@@ -24,7 +27,9 @@ public class MnoAccount {
 
     @PrePersist
     public void prepare() {
+        this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
         this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
+        this.searchBy = this.isNormalAccount + "," + this.creationTime;
     }
 
     public MnoAccount() {
@@ -66,5 +71,13 @@ public class MnoAccount {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public String getSearchBy() {
+        return searchBy;
+    }
+
+    public void setSearchBy(String searchBy) {
+        this.searchBy = searchBy;
     }
 }

@@ -6,82 +6,92 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * 
  * @author blaise irakoze
- *
  */
 @Entity
 public class MnoProduct {
-	@Id
-	@Column(name = "id", length = 90)
-	private String id;
-	@ManyToOne
-	@JoinColumn(name = "mno_profile_id", nullable = false)
-	private MnoProfile mnoProfile;
-	@ManyToOne
-	@JoinColumn(name = "atn_product_id", nullable = false)
-	private AtnProduct atnProduct;
-	private Date creationTime;
+    @Id
+    @Column(name = "id", length = 90)
+    private String id;
+    @ManyToOne
+    @JoinColumn(name = "mno_profile_id", nullable = false)
+    private MnoProfile mnoProfile;
+    @Column(columnDefinition = "TEXT")
+    private String searchBy;
 
-	@PrePersist
-	public void prepare() {
-		this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
-		this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "atn_product_id", nullable = false)
+    private AtnProduct atnProduct;
+    private Date creationTime;
 
-	public MnoProduct() {
-	}
+    @PrePersist
+    public void prepare() {
+        this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
+        this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
+        this.searchBy = this.mnoProfile.getId() + "," + this.atnProduct.getId() + "," + this.creationTime;
+    }
 
-	public MnoProduct(MnoProfile mnoProfile, AtnProduct atnProduct) {
-		this.mnoProfile = mnoProfile;
-		this.atnProduct = atnProduct;
-	}
+    public MnoProduct() {
+    }
 
-	public MnoProduct(MnoProfile mnoProfile, AtnProduct atnProduct, Date creationTime) {
-		this.mnoProfile = mnoProfile;
-		this.atnProduct = atnProduct;
-		this.creationTime = creationTime;
-	}
+    public MnoProduct(MnoProfile mnoProfile, AtnProduct atnProduct) {
+        this.mnoProfile = mnoProfile;
+        this.atnProduct = atnProduct;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public MnoProduct(MnoProfile mnoProfile, AtnProduct atnProduct, Date creationTime) {
+        this.mnoProfile = mnoProfile;
+        this.atnProduct = atnProduct;
+        this.creationTime = creationTime;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public MnoProfile getMnoProfile() {
-		return mnoProfile;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setMnoProfile(MnoProfile mnoProfile) {
-		this.mnoProfile = mnoProfile;
-	}
+    public MnoProfile getMnoProfile() {
+        return mnoProfile;
+    }
 
-	public AtnProduct getAtnProduct() {
-		return atnProduct;
-	}
+    public void setMnoProfile(MnoProfile mnoProfile) {
+        this.mnoProfile = mnoProfile;
+    }
 
-	public void setAtnProduct(AtnProduct atnProduct) {
-		this.atnProduct = atnProduct;
-	}
+    public AtnProduct getAtnProduct() {
+        return atnProduct;
+    }
 
-	public Date getCreationTime() {
-		return creationTime;
-	}
+    public void setAtnProduct(AtnProduct atnProduct) {
+        this.atnProduct = atnProduct;
+    }
 
-	public void setCreationTime(Date creationTime) {
-		this.creationTime = creationTime;
-	}
+    public Date getCreationTime() {
+        return creationTime;
+    }
 
-	@Override
-	public String toString() {
-		return "MnoProduct{" +
-				"id='" + id + '\'' +
-				", mnoProfile=" + mnoProfile +
-				", atnProduct=" + atnProduct +
-				", creationTime=" + creationTime +
-				'}';
-	}
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public String getSearchBy() {
+        return searchBy;
+    }
+
+    public void setSearchBy(String searchBy) {
+        this.searchBy = searchBy;
+    }
+
+    @Override
+    public String toString() {
+        return "MnoProduct{" +
+                "id='" + id + '\'' +
+                ", mnoProfile=" + mnoProfile +
+                ", atnProduct=" + atnProduct +
+                ", creationTime=" + creationTime +
+                '}';
+    }
 }

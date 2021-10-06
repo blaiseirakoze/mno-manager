@@ -1,8 +1,9 @@
 package biz.galaxygroup.atn.mno.services;
 
 import biz.galaxygroup.atn.mno.models.AgentConfigModel;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoFilterModel;
-import biz.galaxygroup.atn.mno.models.ProductFilterModel;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import java.util.List;
  * @author blaise irakoze
  */
 @RestController
-@RequestMapping(value = "mno")
+@RequestMapping(value = "api/mno")
 @CrossOrigin
 public class MnoProfileService {
 
@@ -34,8 +35,8 @@ public class MnoProfileService {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createMnoProfile(@RequestBody MnoProfile mnoProfile) {
-        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.createMnoProfile(mnoProfile), HttpStatus.CREATED);
+    public ResponseEntity<?> createMnoProfile(@RequestBody List<MnoProfile> mnoProfile) {
+        return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.createMnoProfile(mnoProfile), HttpStatus.CREATED);
     }
 
     /**
@@ -57,7 +58,7 @@ public class MnoProfileService {
      */
     @RequestMapping(value = "/edit/{mnoId}", method = RequestMethod.POST)
     public ResponseEntity<?> editMnoProfile(@PathVariable("mnoId") String mnoId, @RequestBody MnoProfile mnoProfile) {
-        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.editMnoProfile(mnoId, mnoProfile), HttpStatus.CREATED);
+        return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.editMnoProfile(mnoId, mnoProfile), HttpStatus.CREATED);
     }
 
     /**
@@ -68,7 +69,7 @@ public class MnoProfileService {
      */
     @RequestMapping(value = "/enable/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> enableMnoProfile(@PathVariable("mnoId") String mnoId) {
-        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "enable"), HttpStatus.CREATED);
+        return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "enable"), HttpStatus.CREATED);
     }
 
     /**
@@ -79,7 +80,7 @@ public class MnoProfileService {
      */
     @RequestMapping(value = "/disable/{mnoId}", method = RequestMethod.GET)
     public ResponseEntity<?> disableMnoProfile(@PathVariable("mnoId") String mnoId) {
-        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "disable"), HttpStatus.CREATED);
+        return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.enableOrDisableMnoProfile(mnoId, "disable"), HttpStatus.CREATED);
     }
 
     /**
@@ -101,7 +102,7 @@ public class MnoProfileService {
      */
     @RequestMapping(value = "/agent/add", method = RequestMethod.POST)
     public ResponseEntity<?> addMnoAgentConfig(@RequestBody AgentConfigModel agentConfigModel) {
-        return new ResponseEntity<MnoProfile>(mnoProfileProcessor.addMnoAgentConfig(agentConfigModel), HttpStatus.CREATED);
+        return new ResponseEntity<SuccessResponseModel>(mnoProfileProcessor.addMnoAgentConfig(agentConfigModel), HttpStatus.CREATED);
     }
 
 //    @RequestMapping(value = "/agent/remove/{mnoId}", method = RequestMethod.POST)
@@ -123,35 +124,16 @@ public class MnoProfileService {
     /**
      * Get MnoByFilterParams service
      *
-     * @param name
-     * @param status
-     * @param agentConfig
-     * @param email
-     * @param creationTime
-     * @param telephone
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
      * @return
      * @throws ParseException
      */
-    @RequestMapping(value = "/filter/", method = RequestMethod.POST)
-    public ResponseEntity<?> getMnoByFilterParams(@RequestParam String name, @RequestParam String status, @RequestParam String agentConfig, @RequestParam String email, @RequestParam String startDate,  @RequestParam String endDate, @RequestParam String telephone) throws ParseException {
-//        name, email, telephone, agentConfig, creationTime, status
-        List<MnoProfile> mnoProfiles;
-        if(startDate.isEmpty()){
-        }
-        if (startDate.isEmpty() && endDate.isEmpty()) {
-            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, status));
-        } else if (!startDate.isEmpty() && endDate.isEmpty()) {
-            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, sDate, status));
-        } else if (startDate.isEmpty() && !endDate.isEmpty()) {
-            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, eDate, status));
-        } else {
-            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, sDate, eDate, status));
-        }
-        return new ResponseEntity<List<MnoProfile>>(mnoProfiles, HttpStatus.OK);
+    @RequestMapping(value = "/filter/", method = RequestMethod.GET)
+    public ResponseEntity<?> getMnoByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+        return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoProfileProcessor.getMnoByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);
     }
-
 }

@@ -2,6 +2,7 @@ package biz.galaxygroup.atn.mno.logic;
 
 import biz.galaxygroup.atn.mno.entities.MnoProfile;
 import biz.galaxygroup.atn.mno.models.AgentConfigModel;
+import biz.galaxygroup.atn.mno.models.MnoFilterModel;
 
 import java.util.List;
 
@@ -77,5 +78,5 @@ public interface IMnoProfileProcessor {
      * @param status
      * @return
      */
-    public List<MnoProfile> getMnoByFilterParams(String name, String email, String telephone, String agentConfig, String creationTime, String status);
+    public List<MnoProfile> getMnoByFilterParams(MnoFilterModel mnoFilterModel);
 }

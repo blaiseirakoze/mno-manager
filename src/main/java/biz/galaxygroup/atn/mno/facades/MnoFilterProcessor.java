@@ -1,12 +1,14 @@
 package biz.galaxygroup.atn.mno.facades;
 
 import biz.galaxygroup.atn.mno.entities.MnoProfile;
+import biz.galaxygroup.atn.mno.models.MnoFilterModel;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Component
@@ -16,12 +18,8 @@ public class MnoFilterProcessor {
     private EntityManager entityManager;
 
     @Transactional
-    public List<MnoProfile> filterTransfer(String name, String email, String telephone, String agentConfig, String creationTime, String status) {
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//        format.format(mnoProfile.getCreationTime());
-        MnoProfile mnoProfile = new MnoProfile(name, email, telephone, agentConfig, status);
-
-        System.out.print("seach object mnoProfile " + mnoProfile);
+    public List<MnoProfile> filterTransfer(MnoFilterModel mnoProfile) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         StringBuilder query = new StringBuilder("Select T from MnoProfile T where T.id is not null ");
 
         if (!mnoProfile.getName().equalsIgnoreCase("")) {
@@ -36,10 +34,12 @@ public class MnoFilterProcessor {
         if (!mnoProfile.getEmail().equalsIgnoreCase("")) {
             query.append(" AND T.email = '" + mnoProfile.getEmail() + "'");
         }
-//        if (!mnoProfile.getCreationTime().toString().equals("")) {
-//            query.append(" AND T.creationTime > '" + mnoProfile.getCreationTime() + "'");
-//        }
-//        2021-10-04
+        if (mnoProfile.getStartDate() != null) {
+            query.append(" AND T.creationTime >= '" + format.format(mnoProfile.getStartDate()) + "'");
+        }
+        if (mnoProfile.getStartDate() != null) {
+            query.append(" AND T.creationTime <= '" + format.format(mnoProfile.getEndDate()) + "'");
+        }
         if (!mnoProfile.getTelephone().equalsIgnoreCase("")) {
             query.append(" AND T.telephone = '" + mnoProfile.getTelephone() + "'");
         }

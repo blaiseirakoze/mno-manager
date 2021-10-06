@@ -5,7 +5,8 @@ import java.util.Date;
 public class ProductFilterModel {
     private String mnoProfile;
     private String atnProduct;
-    private Date creationTime;
+    private Date startDate;
+    private Date endDate;
 
     public ProductFilterModel() {
     }
@@ -15,10 +16,17 @@ public class ProductFilterModel {
         this.atnProduct = atnProduct;
     }
 
-    public ProductFilterModel(String mnoProfile, String atnProduct, Date creationTime) {
+    public ProductFilterModel(String mnoProfile, String atnProduct, Date startDate) {
         this.mnoProfile = mnoProfile;
         this.atnProduct = atnProduct;
-        this.creationTime = creationTime;
+        this.startDate = startDate;
+    }
+
+    public ProductFilterModel(String mnoProfile, String atnProduct, Date startDate, Date endDate) {
+        this.mnoProfile = mnoProfile;
+        this.atnProduct = atnProduct;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public String getMnoProfile() {
@@ -37,12 +45,20 @@ public class ProductFilterModel {
         this.atnProduct = atnProduct;
     }
 
-    public Date getCreationTime() {
-        return creationTime;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     @Override
@@ -50,7 +66,8 @@ public class ProductFilterModel {
         return "ProductFilterModel{" +
                 "mnoProfile='" + mnoProfile + '\'' +
                 ", atnProduct='" + atnProduct + '\'' +
-                ", creationTime=" + creationTime +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 '}';
     }
 }

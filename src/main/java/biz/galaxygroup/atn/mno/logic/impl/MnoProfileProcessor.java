@@ -6,6 +6,7 @@ import biz.galaxygroup.atn.mno.exceptions.HandlerNotFoundException;
 import biz.galaxygroup.atn.mno.facades.MnoProfileRepository;
 import biz.galaxygroup.atn.mno.facades.MnoFilterProcessor;
 import biz.galaxygroup.atn.mno.models.AgentConfigModel;
+import biz.galaxygroup.atn.mno.models.MnoFilterModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -171,22 +172,15 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     }
 
     /**
-     * Get MnoByFilterParams processor
+     * Get MnoByFilterParams processors
      *
-     * @param name
-     * @param email
-     * @param telephone
-     * @param agentConfig
-     * @param creationTime
-     * @param status
+     * @param mnoFilterModel
      * @return
      */
     @Override
-    public List<MnoProfile> getMnoByFilterParams(String name, String email, String telephone, String agentConfig, String creationTime, String status) {
+    public List<MnoProfile> getMnoByFilterParams(MnoFilterModel mnoFilterModel) {
         try {
-//            Date newCreationTime = new SimpleDateFormat("yyyy-MM-dd").parse(creationTime);
-//            MnoProfile mnoProfile = new MnoProfile(name, email, telephone, agentConfig, new SimpleDateFormat("yyyy-MM-dd").format(newCreationTime), status);
-            List<MnoProfile> foundMnoProfile = filterProcessor.filterTransfer(name, email, telephone, agentConfig, creationTime, status);
+            List<MnoProfile> foundMnoProfile = filterProcessor.filterTransfer(mnoFilterModel);
             return foundMnoProfile;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");

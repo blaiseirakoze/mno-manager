@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,13 +65,28 @@ public class MnoProductService {
      *
      * @param mnoProfile
      * @param atnProduct
-     * @param creationTime
+     * @param startDate
+     * @param endDate
      * @return
      * @throws ParseException
      */
     @RequestMapping(value = "/filter/", method = RequestMethod.POST)
-    public ResponseEntity<?> getProductByFilterParams(@RequestParam String mnoProfile, @RequestParam String atnProduct, @RequestParam String creationTime) throws ParseException {
-        return new ResponseEntity<List<MnoProduct>>(mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, new SimpleDateFormat("yyyy-mm-dd").parse(creationTime))), HttpStatus.OK);
+    public ResponseEntity<?> getProductByFilterParams(@RequestParam String mnoProfile, @RequestParam String atnProduct, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+        List<MnoProduct> mnoProducts = new ArrayList<MnoProduct>();
+        if (startDate.isEmpty() && endDate.isEmpty()) {
+            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct));
+        } else if (!startDate.isEmpty() && endDate.isEmpty()) {
+            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, sDate));
+        } else if (startDate.isEmpty() && !endDate.isEmpty()) {
+            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, eDate));
+        } else {
+            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, sDate, eDate));
+        }
+        return new ResponseEntity<List<MnoProduct>>(mnoProducts, HttpStatus.OK);
     }
 
 }

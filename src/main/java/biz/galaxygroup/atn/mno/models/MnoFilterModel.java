@@ -1,22 +1,43 @@
 package biz.galaxygroup.atn.mno.models;
 
+import java.util.Date;
+
 public class MnoFilterModel {
     private String name;
     private String email;
     private String telephone;
     private String agentConfig;
-    private String creationTime;
+    private Date startDate;
+    private Date endDate;
     private String status;
 
     public MnoFilterModel() {
     }
 
-    public MnoFilterModel(String name, String email, String telephone, String agentConfig, String creationTime, String status) {
+    public MnoFilterModel(String name, String email, String telephone, String agentConfig, String status) {
         this.name = name;
         this.email = email;
         this.telephone = telephone;
         this.agentConfig = agentConfig;
-        this.creationTime = creationTime;
+        this.status = status;
+    }
+
+    public MnoFilterModel(String name, String email, String telephone, String agentConfig, Date startDate, Date endDate, String status) {
+        this.name = name;
+        this.email = email;
+        this.telephone = telephone;
+        this.agentConfig = agentConfig;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+    }
+
+    public MnoFilterModel(String name, String email, String telephone, String agentConfig, Date startDate, String status) {
+        this.name = name;
+        this.email = email;
+        this.telephone = telephone;
+        this.agentConfig = agentConfig;
+        this.startDate = startDate;
         this.status = status;
     }
 
@@ -52,12 +73,20 @@ public class MnoFilterModel {
         this.agentConfig = agentConfig;
     }
 
-    public String getCreationTime() {
-        return creationTime;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setCreationTime(String creationTime) {
-        this.creationTime = creationTime;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public String getStatus() {
@@ -75,7 +104,8 @@ public class MnoFilterModel {
                 ", email='" + email + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", agentConfig='" + agentConfig + '\'' +
-                ", creationTime='" + creationTime + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", status='" + status + '\'' +
                 '}';
     }

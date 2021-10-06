@@ -1,6 +1,8 @@
 package biz.galaxygroup.atn.mno.services;
 
 import biz.galaxygroup.atn.mno.models.AgentConfigModel;
+import biz.galaxygroup.atn.mno.models.MnoFilterModel;
+import biz.galaxygroup.atn.mno.models.ProductFilterModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,8 @@ import biz.galaxygroup.atn.mno.entities.MnoProfile;
 import biz.galaxygroup.atn.mno.logic.IMnoProfileProcessor;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -129,8 +133,25 @@ public class MnoProfileService {
      * @throws ParseException
      */
     @RequestMapping(value = "/filter/", method = RequestMethod.POST)
-    public ResponseEntity<?> getMnoByFilterParams(@RequestParam String name, @RequestParam String status, @RequestParam String agentConfig, @RequestParam String email, @RequestParam String creationTime, @RequestParam String telephone) throws ParseException {
-        return new ResponseEntity<List<MnoProfile>>(mnoProfileProcessor.getMnoByFilterParams(name, email, telephone, agentConfig, creationTime, status), HttpStatus.OK);
+    public ResponseEntity<?> getMnoByFilterParams(@RequestParam String name, @RequestParam String status, @RequestParam String agentConfig, @RequestParam String email, @RequestParam String startDate,  @RequestParam String endDate, @RequestParam String telephone) throws ParseException {
+//        name, email, telephone, agentConfig, creationTime, status
+        List<MnoProfile> mnoProfiles;
+        if(startDate.isEmpty()){
+        }
+        if (startDate.isEmpty() && endDate.isEmpty()) {
+            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, status));
+        } else if (!startDate.isEmpty() && endDate.isEmpty()) {
+            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, sDate, status));
+        } else if (startDate.isEmpty() && !endDate.isEmpty()) {
+            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, eDate, status));
+        } else {
+            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+            mnoProfiles = mnoProfileProcessor.getMnoByFilterParams(new MnoFilterModel(name, email, telephone, agentConfig, sDate, eDate, status));
+        }
+        return new ResponseEntity<List<MnoProfile>>(mnoProfiles, HttpStatus.OK);
     }
 
 }

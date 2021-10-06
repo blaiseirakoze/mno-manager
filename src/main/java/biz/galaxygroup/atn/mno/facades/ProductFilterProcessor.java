@@ -19,9 +19,7 @@ public class ProductFilterProcessor {
 
     @Transactional
     public List<MnoProduct> filterTransfer(ProductFilterModel productFilterModel) {
-        System.out.println("product reqqqqqqqqqqqqqqqqqqqqqqqqqqq "+ productFilterModel);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//        format.format(productFilterModel.getCreationTime());
         StringBuilder query = new StringBuilder("Select T from MnoProduct T where T.id is not null ");
 
         if (!productFilterModel.getMnoProfile().equalsIgnoreCase("")) {
@@ -30,8 +28,11 @@ public class ProductFilterProcessor {
         if (!productFilterModel.getAtnProduct().equalsIgnoreCase("")) {
             query.append(" AND T.atnProduct = '" + productFilterModel.getAtnProduct() + "'");
         }
-        if (!productFilterModel.getCreationTime().toString().equals("")) {
-            query.append(" AND T.creationTime > '" + format.format(productFilterModel.getCreationTime()) + "'");
+        if (productFilterModel.getStartDate() != null) {
+            query.append(" AND T.creationTime >= '" + format.format(productFilterModel.getStartDate()) + "'");
+        }
+        if (productFilterModel.getEndDate() != null) {
+            query.append(" AND T.creationTime <= '" + format.format(productFilterModel.getEndDate()) + "'");
         }
         query.append(" ORDER BY T.creationTime desc");
         Query queryResult = entityManager.createQuery(query.toString());

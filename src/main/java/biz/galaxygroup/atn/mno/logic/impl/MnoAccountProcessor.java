@@ -1,18 +1,22 @@
 package biz.galaxygroup.atn.mno.logic.impl;
 
-import biz.galaxygroup.atn.mno.entities.Account;
-import biz.galaxygroup.atn.mno.entities.MnoAccount;
-import biz.galaxygroup.atn.mno.entities.MnoProfile;
+import biz.galaxygroup.atn.mno.entities.*;
 import biz.galaxygroup.atn.mno.exceptions.HandlerInternalServerErrorException;
 import biz.galaxygroup.atn.mno.exceptions.HandlerNotFoundException;
 import biz.galaxygroup.atn.mno.facades.AccountRepository;
 import biz.galaxygroup.atn.mno.facades.MnoAccountRepository;
 import biz.galaxygroup.atn.mno.facades.MnoProfileRepository;
-import biz.galaxygroup.atn.mno.models.MnoAccountModel;
-import biz.galaxygroup.atn.mno.models.SuccessResponse;
+import biz.galaxygroup.atn.mno.facades.FilterProcessor;
+import biz.galaxygroup.atn.mno.models.*;
 import biz.galaxygroup.atn.mno.logic.IMnoAccountProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author blaise irakoze
@@ -29,6 +33,9 @@ public class MnoAccountProcessor implements IMnoAccountProcessor {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private FilterProcessor filterProcessor;
+
     /**
      * Create MnoAccount processor
      *
@@ -36,17 +43,33 @@ public class MnoAccountProcessor implements IMnoAccountProcessor {
      * @return
      */
     @Override
-    public MnoAccount createMnoAccount(MnoAccountModel mnoAccountModel) {
-        MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoAccountModel.getMnoProfileId()).orElse(new MnoProfile());
-        if (foundMnoProfile.getId() == null) {
-            throw new HandlerNotFoundException("MNO not found");
-        }
-        Account foundAccount = accountRepository.findById(mnoAccountModel.getAccountId()).orElse(new Account());
-        if (foundAccount.getId() == null) {
-            throw new HandlerNotFoundException("Account not found");
+    public SuccessResponseModel createMnoAccount(List<MnoAccountModel> mnoAccountModel) {
+        List<MnoProfile> foundMnoProfileList = new ArrayList<>();
+        List<Account> foundAccountList = new ArrayList<>();
+        int i = 0;
+        MnoProfile foundMnoProfile = new MnoProfile();
+        Account foundAccount = new Account();
+        for (MnoAccountModel mnoAccount : mnoAccountModel) {
+            foundMnoProfile = mnoProfileRepository.findById(mnoAccount.getMnoProfileId()).orElse(new MnoProfile());
+            if (foundMnoProfile.getId() == null) {
+                throw new HandlerNotFoundException("MNO with " + mnoAccount.getMnoProfileId() + " not found");
+            } else {
+                foundMnoProfileList.add(foundMnoProfile);
+            }
+            foundAccount = accountRepository.findById(mnoAccount.getAccountId()).orElse(new Account());
+            if (foundAccount.getId() == null) {
+                throw new HandlerNotFoundException("Account with " + mnoAccount.getAccountId() + " not found");
+            } else {
+                foundAccountList.add(foundAccount);
+            }
         }
         try {
-            return mnoAccountRepository.save(new MnoAccount(mnoAccountModel.getIsNormalAccount(), foundMnoProfile, foundAccount));
+
+            for (MnoAccountModel mnoAccount : mnoAccountModel) {
+                mnoAccountRepository.save(new MnoAccount(mnoAccount.getIsNormalAccount(), foundMnoProfileList.get(i), foundAccountList.get(i)));
+                i++;
+            }
+            return new SuccessResponseModel(HttpStatus.CREATED.toString(), "Mno account successfully created");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
@@ -78,14 +101,39 @@ public class MnoAccountProcessor implements IMnoAccountProcessor {
      * @return
      */
     @Override
-    public SuccessResponse removeMnoAccount(String id) {
+    public SuccessResponseModel removeMnoAccount(String id) {
         MnoAccount foundMnoAccount = mnoAccountRepository.findById(id).orElse(new MnoAccount());
         if (foundMnoAccount.getId() == null) {
             throw new HandlerNotFoundException("MnoAccount not found");
         }
         try {
             mnoAccountRepository.deleteById(id);
-            return new SuccessResponse("mno account well removed");
+            return new SuccessResponseModel(HttpStatus.NO_CONTENT.toString(), "Mno account successfully removed");
+        } catch (Exception e) {
+            throw new HandlerInternalServerErrorException("Error occurs");
+        }
+    }
+
+    @Override
+    public GetResponseModel getMnoAccountByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate) {
+        try {
+            FilterModel filterModel = new FilterModel();
+            if (startDate.isEmpty() && endDate.isEmpty()) {
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy);
+            } else if (!startDate.isEmpty() && endDate.isEmpty()) {
+                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, sDate);
+            } else if (startDate.isEmpty() && !endDate.isEmpty()) {
+                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate);
+            } else {
+                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate, sDate);
+            }
+            List<Object> list = filterProcessor.filterTransfer(filterModel, "MnoAccount");
+            GetResponseModel getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
+            return getResponseModel;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }

@@ -1,10 +1,9 @@
 package biz.galaxygroup.atn.mno.logic;
 
 import biz.galaxygroup.atn.mno.entities.MnoProduct;
-import biz.galaxygroup.atn.mno.entities.MnoProfile;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoProductModel;
-import biz.galaxygroup.atn.mno.models.ProductFilterModel;
-import biz.galaxygroup.atn.mno.models.SuccessResponse;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface IMnoProductProcessor {
      * @param mnoProductModel
      * @return
      */
-    public MnoProduct createMnoProduct(MnoProductModel mnoProductModel);
+    public SuccessResponseModel createMnoProduct(List<MnoProductModel> mnoProductModel);
 
     /**
      * Get MnoProduct by MnoProductId interface
@@ -32,13 +31,13 @@ public interface IMnoProductProcessor {
      * @param mnoProductId
      * @return
      */
-    public SuccessResponse removeMnoProduct(String mnoProductId);
+    public SuccessResponseModel removeMnoProduct(String mnoProductId);
 
     /**
      * Get ProductByFilterParams interface
      *
-     * @param productFilterModel
+     * @param
      * @return
      */
-    public List<MnoProduct> getProductByFilterParams(ProductFilterModel productFilterModel);
+    public GetResponseModel getProductByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate);
 }

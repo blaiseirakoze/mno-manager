@@ -2,9 +2,9 @@ package biz.galaxygroup.atn.mno.services;
 
 import biz.galaxygroup.atn.mno.entities.MnoProduct;
 import biz.galaxygroup.atn.mno.logic.IMnoProductProcessor;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoProductModel;
-import biz.galaxygroup.atn.mno.models.ProductFilterModel;
-import biz.galaxygroup.atn.mno.models.SuccessResponse;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author blaise irakoze
  */
 @RestController
-@RequestMapping(value = "mno/product")
+@RequestMapping(value = "api/mno/product")
 @CrossOrigin
 public class MnoProductService {
 
@@ -34,8 +34,8 @@ public class MnoProductService {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createMnoProduct(@RequestBody MnoProductModel mnoProductModel) {
-        return new ResponseEntity<MnoProduct>(mnoProductProcessor.createMnoProduct(mnoProductModel), HttpStatus.CREATED);
+    public ResponseEntity<?> createMnoProduct(@RequestBody List<MnoProductModel> mnoProductModel) {
+        return new ResponseEntity<SuccessResponseModel>(mnoProductProcessor.createMnoProduct(mnoProductModel), HttpStatus.CREATED);
     }
 
     /**
@@ -57,36 +57,23 @@ public class MnoProductService {
      */
     @RequestMapping(value = "/remove/{mnoProductId}", method = RequestMethod.GET)
     public ResponseEntity<?> removeMnoProduct(@PathVariable("mnoProductId") String mnoProductId) {
-        return new ResponseEntity<SuccessResponse>(mnoProductProcessor.removeMnoProduct(mnoProductId), HttpStatus.CREATED);
+        return new ResponseEntity<SuccessResponseModel>(mnoProductProcessor.removeMnoProduct(mnoProductId), HttpStatus.CREATED);
     }
 
     /**
      * Get ProductByFilterParams service
      *
-     * @param mnoProfile
-     * @param atnProduct
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
      * @param startDate
      * @param endDate
      * @return
      * @throws ParseException
      */
-    @RequestMapping(value = "/filter/", method = RequestMethod.POST)
-    public ResponseEntity<?> getProductByFilterParams(@RequestParam String mnoProfile, @RequestParam String atnProduct, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
-        List<MnoProduct> mnoProducts = new ArrayList<MnoProduct>();
-        if (startDate.isEmpty() && endDate.isEmpty()) {
-            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct));
-        } else if (!startDate.isEmpty() && endDate.isEmpty()) {
-            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, sDate));
-        } else if (startDate.isEmpty() && !endDate.isEmpty()) {
-            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, eDate));
-        } else {
-            Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-            Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-            mnoProducts = mnoProductProcessor.getProductByFilterParams(new ProductFilterModel(mnoProfile, atnProduct, sDate, eDate));
-        }
-        return new ResponseEntity<List<MnoProduct>>(mnoProducts, HttpStatus.OK);
+    @RequestMapping(value = "/filter/", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+        return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoProductProcessor.getProductByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);
     }
 
 }

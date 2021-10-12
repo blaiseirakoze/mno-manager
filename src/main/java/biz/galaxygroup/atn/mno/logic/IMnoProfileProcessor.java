@@ -2,7 +2,9 @@ package biz.galaxygroup.atn.mno.logic;
 
 import biz.galaxygroup.atn.mno.entities.MnoProfile;
 import biz.galaxygroup.atn.mno.models.AgentConfigModel;
+import biz.galaxygroup.atn.mno.models.GetResponseModel;
 import biz.galaxygroup.atn.mno.models.MnoFilterModel;
+import biz.galaxygroup.atn.mno.models.SuccessResponseModel;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public interface IMnoProfileProcessor {
      * @param mnoProfile
      * @return
      */
-    public MnoProfile createMnoProfile(MnoProfile mnoProfile);
+    public SuccessResponseModel createMnoProfile(List<MnoProfile> mnoProfile);
 
     /**
      * Get all MnoProfile interface
@@ -33,7 +35,7 @@ public interface IMnoProfileProcessor {
      * @param mnoProfile
      * @return
      */
-    public MnoProfile editMnoProfile(String mnoId, MnoProfile mnoProfile);
+    public SuccessResponseModel editMnoProfile(String mnoId, MnoProfile mnoProfile);
 
     /**
      * Enable or Disable MnoProfile interface
@@ -41,7 +43,7 @@ public interface IMnoProfileProcessor {
      * @param mnoId
      * @return
      */
-    public MnoProfile enableOrDisableMnoProfile(String mnoId, String status);
+    public SuccessResponseModel enableOrDisableMnoProfile(String mnoId, String status);
 
     /**
      * Get MnoProfile by id interface
@@ -57,7 +59,7 @@ public interface IMnoProfileProcessor {
      * @param agentConfigModel
      * @return
      */
-    public MnoProfile addMnoAgentConfig(AgentConfigModel agentConfigModel);
+    public SuccessResponseModel addMnoAgentConfig(AgentConfigModel agentConfigModel);
 
     /**
      * Get MNO agent config by MNO id interface
@@ -70,13 +72,12 @@ public interface IMnoProfileProcessor {
     /**
      * Get MnoByFilterParams interface
      *
-     * @param name
-     * @param email
-     * @param telephone
-     * @param agentConfig
-     * @param creationTime
-     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
      * @return
      */
-    public List<MnoProfile> getMnoByFilterParams(MnoFilterModel mnoFilterModel);
+    public GetResponseModel getMnoByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate);
 }

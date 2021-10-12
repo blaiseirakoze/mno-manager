@@ -3,15 +3,18 @@ package biz.galaxygroup.atn.mno.logic.impl;
 import biz.galaxygroup.atn.mno.entities.MnoProfile;
 import biz.galaxygroup.atn.mno.exceptions.HandlerInternalServerErrorException;
 import biz.galaxygroup.atn.mno.exceptions.HandlerNotFoundException;
+import biz.galaxygroup.atn.mno.facades.FilterProcessor;
 import biz.galaxygroup.atn.mno.facades.MnoProfileRepository;
 import biz.galaxygroup.atn.mno.facades.MnoFilterProcessor;
-import biz.galaxygroup.atn.mno.models.AgentConfigModel;
-import biz.galaxygroup.atn.mno.models.MnoFilterModel;
+import biz.galaxygroup.atn.mno.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import biz.galaxygroup.atn.mno.logic.IMnoProfileProcessor;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +27,7 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     private MnoProfileRepository mnoProfileRepository;
 
     @Autowired
-    private MnoFilterProcessor filterProcessor;
+    private FilterProcessor filterProcessor;
 
     /**
      * Create MnoProfile processor
@@ -33,9 +36,12 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
      * @return
      */
     @Override
-    public MnoProfile createMnoProfile(MnoProfile mnoProfile) {
+    public SuccessResponseModel createMnoProfile(List<MnoProfile> mnoProfile) {
         try {
-            return mnoProfileRepository.save(mnoProfile);
+            for (MnoProfile mnoPro : mnoProfile) {
+                mnoProfileRepository.save(mnoPro);
+            }
+            return new SuccessResponseModel(HttpStatus.CREATED.toString(), "Mno profile successfully created");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
@@ -63,13 +69,14 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
      * @return
      */
     @Override
-    public MnoProfile editMnoProfile(String mnoId, MnoProfile mnoProfile) {
+    public SuccessResponseModel editMnoProfile(String mnoId, MnoProfile mnoProfile) {
         MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
         if (foundMnoProfile.getId() == null) {
             throw new HandlerNotFoundException("MNO not found");
         }
         try {
-            return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), mnoProfile.getName(), mnoProfile.getEmail(), mnoProfile.getTelephone(), mnoProfile.getAgentConfig(), mnoProfile.getCreationTime(), mnoProfile.getStatus()));
+            mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), mnoProfile.getName(), mnoProfile.getEmail(), mnoProfile.getTelephone(), mnoProfile.getAgentConfig(), mnoProfile.getCreationTime(), mnoProfile.getStatus()));
+            return new SuccessResponseModel(HttpStatus.CREATED.toString(), "Mno profile successfully updated");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
@@ -82,13 +89,14 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
      * @return
      */
     @Override
-    public MnoProfile enableOrDisableMnoProfile(String mnoId, String status) {
+    public SuccessResponseModel enableOrDisableMnoProfile(String mnoId, String status) {
         MnoProfile foundMnoProfile = mnoProfileRepository.findById(mnoId).orElse(new MnoProfile());
         if (foundMnoProfile.getId() == null) {
             throw new HandlerNotFoundException("MNO not found");
         }
         try {
-            return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), foundMnoProfile.getAgentConfig(), foundMnoProfile.getCreationTime(), status));
+            mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), foundMnoProfile.getAgentConfig(), foundMnoProfile.getCreationTime(), status));
+            return new SuccessResponseModel(HttpStatus.CREATED.toString(), "Mno profile successfully status changed");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
@@ -120,13 +128,14 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
      * @return
      */
     @Override
-    public MnoProfile addMnoAgentConfig(AgentConfigModel agentConfigModel) {
+    public SuccessResponseModel addMnoAgentConfig(AgentConfigModel agentConfigModel) {
         MnoProfile foundMnoProfile = mnoProfileRepository.findById(agentConfigModel.getMnoId()).orElse(new MnoProfile());
         if (foundMnoProfile.getId() == null) {
             throw new HandlerNotFoundException("MNO not found");
         }
         try {
-            return mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), agentConfigModel.getAgentConfig(), foundMnoProfile.getCreationTime(), foundMnoProfile.getStatus()));
+            mnoProfileRepository.save(new MnoProfile(foundMnoProfile.getId(), foundMnoProfile.getName(), foundMnoProfile.getEmail(), foundMnoProfile.getTelephone(), agentConfigModel.getAgentConfig(), foundMnoProfile.getCreationTime(), foundMnoProfile.getStatus()));
+            return new SuccessResponseModel(HttpStatus.CREATED.toString(), "Mno agent successfully added");
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }
@@ -174,14 +183,33 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     /**
      * Get MnoByFilterParams processors
      *
-     * @param mnoFilterModel
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
      * @return
      */
     @Override
-    public List<MnoProfile> getMnoByFilterParams(MnoFilterModel mnoFilterModel) {
+    public GetResponseModel getMnoByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate) {
         try {
-            List<MnoProfile> foundMnoProfile = filterProcessor.filterTransfer(mnoFilterModel);
-            return foundMnoProfile;
+            FilterModel filterModel = new FilterModel();
+            if (startDate.isEmpty() && endDate.isEmpty()) {
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy);
+            } else if (!startDate.isEmpty() && endDate.isEmpty()) {
+                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, sDate);
+            } else if (startDate.isEmpty() && !endDate.isEmpty()) {
+                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate);
+            } else {
+                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate, sDate);
+            }
+            List<Object> list = filterProcessor.filterTransfer(filterModel, "MnoProfile");
+            GetResponseModel getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
+            return getResponseModel;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");
         }

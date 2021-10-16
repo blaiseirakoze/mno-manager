@@ -14,6 +14,7 @@ import javax.persistence.*;
  * @author blaise irakoze
  */
 @Entity
+@Table(indexes = {@Index(name = "searchBy", columnList = "searchBy")})
 public class MnoProfile {
     @Id
     @Column(name = "id", length = 90)
@@ -29,8 +30,7 @@ public class MnoProfile {
     private Date creationTime;
     @Column(name = "status", length = 30)
     private String status;
-//    @Index
-    @Column(columnDefinition = "TEXT", name = "search_by")
+    @Column(name = "searchBy", length = 150)
     private String searchBy;
 
     @JsonIgnore
@@ -46,6 +46,12 @@ public class MnoProfile {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
         this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
+        this.searchBy = this.name + "," + this.email + "," + this.telephone + "," + this.agentConfig + "," + format.format(this.creationTime) + "," + this.status;
+    }
+
+    @PreUpdate
+    public void update() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         this.searchBy = this.name + "," + this.email + "," + this.telephone + "," + this.agentConfig + "," + format.format(this.creationTime) + "," + this.status;
     }
 

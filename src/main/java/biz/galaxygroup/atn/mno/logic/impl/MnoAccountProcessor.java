@@ -114,6 +114,16 @@ public class MnoAccountProcessor implements IMnoAccountProcessor {
         }
     }
 
+    /**
+     * Get MnoAccountByFilterParams processor
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param searchBy
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @Override
     public GetResponseModel getMnoAccountByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate) {
         try {

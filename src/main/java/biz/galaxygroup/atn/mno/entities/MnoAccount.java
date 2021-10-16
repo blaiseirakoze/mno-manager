@@ -1,6 +1,7 @@
 package biz.galaxygroup.atn.mno.entities;
 
 import javax.persistence.*;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -8,13 +9,14 @@ import java.util.UUID;
  * @author blaise irakoze
  */
 @Entity
+@Table(indexes = {@Index(name = "searchBy", columnList = "searchBy")})
 public class MnoAccount {
     @Id
     @Column(name = "id", length = 90)
     private String id;
     private int isNormalAccount;
     private Date creationTime;
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "searchBy", length = 60)
     private String searchBy;
 
     @ManyToOne
@@ -29,6 +31,11 @@ public class MnoAccount {
     public void prepare() {
         this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
         this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
+        this.searchBy = this.isNormalAccount + "," + this.creationTime;
+    }
+
+    @PreUpdate
+    public void update() throws ParseException {
         this.searchBy = this.isNormalAccount + "," + this.creationTime;
     }
 

@@ -2,6 +2,8 @@ package biz.galaxygroup.atn.mno.entities;
 
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,6 +11,7 @@ import java.util.UUID;
  * @author blaise irakoze
  */
 @Entity
+@Table(indexes = {@Index(name = "searchBy", columnList = "searchBy")})
 public class MnoProduct {
     @Id
     @Column(name = "id", length = 90)
@@ -16,7 +19,7 @@ public class MnoProduct {
     @ManyToOne
     @JoinColumn(name = "mno_profile_id", nullable = false)
     private MnoProfile mnoProfile;
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "searchBy", length = 150)
     private String searchBy;
 
     @ManyToOne
@@ -28,7 +31,12 @@ public class MnoProduct {
     public void prepare() {
         this.creationTime = this.creationTime == null ? new Date() : this.creationTime;
         this.id = this.id == null ? UUID.randomUUID().toString() : this.id;
-        this.searchBy = this.mnoProfile.getId() + "," + this.atnProduct.getId() + "," + this.creationTime;
+        this.searchBy = this.mnoProfile.getId() + "," + this.atnProduct.getId();
+    }
+
+    @PreUpdate
+    public void update() throws ParseException {
+        this.searchBy = this.mnoProfile.getId() + "," + this.atnProduct.getId();
     }
 
     public MnoProduct() {

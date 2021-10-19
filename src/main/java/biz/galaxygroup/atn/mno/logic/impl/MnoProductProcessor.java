@@ -132,22 +132,13 @@ public class MnoProductProcessor implements IMnoProductProcessor {
     @Override
     public GetResponseModel getProductByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate) {
         try {
-            FilterModel filterModel = new FilterModel();
-            if (startDate.isEmpty() && endDate.isEmpty()) {
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy);
-            } else if (!startDate.isEmpty() && endDate.isEmpty()) {
-                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy, sDate);
-            } else if (startDate.isEmpty() && !endDate.isEmpty()) {
-                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate);
+            List<Object> list = filterProcessor.filterTransfer(pageNumber, pageSize, searchBy, startDate, endDate, "MnoProduct");
+            GetResponseModel getResponseModel;
+            if (pageNumber == null) {
+                getResponseModel = new GetResponseModel(list.size(), list);
             } else {
-                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate, sDate);
+                getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
             }
-            List<Object> list = filterProcessor.filterTransfer(filterModel, "MnoProduct");
-            GetResponseModel getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
             return getResponseModel;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");

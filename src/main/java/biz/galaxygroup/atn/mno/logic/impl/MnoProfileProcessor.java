@@ -11,9 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import biz.galaxygroup.atn.mno.logic.IMnoProfileProcessor;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +24,9 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
 
     @Autowired
     private FilterProcessor filterProcessor;
+
+    @Autowired
+    private biz.galaxygroup.atn.mno.facades.impl.FilterProcessor filterProcessor2;
 
     /**
      * Create MnoProfile processor
@@ -191,22 +191,13 @@ public class MnoProfileProcessor implements IMnoProfileProcessor {
     @Override
     public GetResponseModel getMnoByFilterParams(String pageNumber, String pageSize, String searchBy, String startDate, String endDate) {
         try {
-            FilterModel filterModel = new FilterModel();
-            if (startDate.isEmpty() && endDate.isEmpty()) {
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy);
-            } else if (!startDate.isEmpty() && endDate.isEmpty()) {
-                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy, sDate);
-            } else if (startDate.isEmpty() && !endDate.isEmpty()) {
-                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate);
+            List<Object> list = filterProcessor.filterTransfer(pageNumber, pageSize, searchBy, startDate, endDate, "MnoProfile");
+            GetResponseModel getResponseModel;
+            if (pageNumber == null) {
+                getResponseModel = new GetResponseModel(list.size(), list);
             } else {
-                Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-                Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-                filterModel = new FilterModel(pageNumber, pageSize, searchBy, eDate, sDate);
+                getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
             }
-            List<Object> list = filterProcessor.filterTransfer(filterModel, "MnoProfile");
-            GetResponseModel getResponseModel = new GetResponseModel(list.size(), Integer.valueOf(pageNumber), list);
             return getResponseModel;
         } catch (Exception e) {
             throw new HandlerInternalServerErrorException("Error occurs");

@@ -78,7 +78,7 @@ public class FilterModel {
         return "FilterModel{" +
                 "pageNumber=" + pageNumber +
                 ", pageSize=" + pageSize +
-                ", searchBy='" + searchBy + '\'' +
+                ", searchBy=" + searchBy +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';

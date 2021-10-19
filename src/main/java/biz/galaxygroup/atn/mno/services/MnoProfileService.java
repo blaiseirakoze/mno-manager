@@ -45,7 +45,7 @@ public class MnoProfileService {
      * @return
      */
     @RolesAllowed({"admin"})
-    @RequestMapping(value = "/filter", method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ResponseEntity<?> getAllMnoProfile() {
         return new ResponseEntity<List<MnoProfile>>(mnoProfileProcessor.getAllMnoProfile(), HttpStatus.OK);
     }
@@ -147,8 +147,13 @@ public class MnoProfileService {
      * @throws ParseException
      */
     @RolesAllowed({"admin"})
-    @RequestMapping(value = "/filter/", method = RequestMethod.GET)
-    public ResponseEntity<?> getMnoByFilterParams(@RequestParam String pageNumber, @RequestParam String pageSize, @RequestParam String searchBy, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+    @RequestMapping(value = "/filter", method = RequestMethod.GET)
+    public ResponseEntity<?> getMnoByFilterParams(
+            @RequestParam(required = false) String pageNumber,
+            @RequestParam(required = false) String pageSize,
+            @RequestParam(required = false) String searchBy,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) throws ParseException {
         return new ResponseEntity<GetResponseModel>((GetResponseModel) mnoProfileProcessor.getMnoByFilterParams(pageNumber, pageSize, searchBy, startDate, endDate), HttpStatus.OK);
     }
 }
